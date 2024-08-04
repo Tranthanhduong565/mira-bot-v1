@@ -1,0 +1,54 @@
+{
+    "facebookAccountOptions": {
+        "email": "",
+        "password": "",
+        "whiteID": null,
+        "proxy": null,
+        "cookies": "",
+        "facebookState": "fbstate.json"
+    },
+    "botOptions": {
+        "adminOnly": true,
+        "name": "Mira",
+        "prefix": ",",
+        "adminIDs": [
+            100036947774673
+        ]
+    },
+    "facebookAPIsOptions": {
+        "autoSeenMessage": true,
+        "autoRestartListenMQTT": true,
+        "autoReconnect": true,
+        "listenMessage": true,
+        "listenNotification": true,
+        "listenSelf": true,
+        "listenEventSelf": true,
+        "listenEvent": true,
+        "forceLogin": false,
+        "autoRefreshState": true
+    },
+    "systemOptions": {
+        "time_zone": "Asia/Ho_Chi_Minh",
+        "language": "vi-VN",
+        "autoUpdate": {
+            "enable": true,
+            "releaseOnly": true 
+        },
+        "autoRestart": {
+            "enable": true,
+            "timeMS": 3600000
+        },
+        "autoLoadCommands": {
+            "enable": true,
+            "exceptions": []
+        },
+        "autoReloadCommands": {
+            "enable": true,
+            "exceptions": []
+        },
+        "database": {
+            "type": "sqlite",
+            "mongoURI": ""
+        }
+    }
+}

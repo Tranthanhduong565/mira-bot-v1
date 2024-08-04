@@ -1,0 +1,43 @@
+{
+    "system": {
+        "process": {
+            "start": {
+                "message": "Đang Khởi Chạy Mã Nguồn Mira!",
+                "version": "Phiên Bản Mã Nguồn: %1"
+            },
+            "exit": "Đang Tắt Mã Nguồn, Mã: %1",
+            "restart": "Đang Khởi Động Lại..."
+        },
+        "update": {
+            "newVersionAvailable": "Phiên Bản %1 Đã Được Công Bố, Nguồn: %2",
+            "notNewVersionAvailable": "Bạn Đang Xử Dụng Phiên Bản Mới Nhất. Chúc Bạn 1 Ngày Tốt Lành!",
+            "auto": "Đang Tự Động Cập Phiên Bản. Vui Lòng Không Tắt Mã Nguồn Đến Khi Cập Nhật Xong!",
+            "success": "Đã Cập Nhật Thành Công. Hệ Thống Sẽ Tự Khởi Động Lại Sau 5s!",
+            "error": "Không Thể Cập Nhật Mã Nguồn, Lỗi: %1"
+        },
+        "config": {
+            "reload": {
+                "success": "Cập Nhật Config Thành Công!",
+                "error": "Cập Nhật Config Thất Bại, Lỗi: %1"
+            },
+            "missing": {
+                "information": "Không Tìm Thấy Thông Tin Tài Khoản!"
+            }
+        },
+        "facebook": {
+            "checkpoint": "Bạn Đã Bật Checkpoint. Vui Lòng Xác Duyệt!",
+            "missTimeCheckpoint": "Hết Thời Gian Chờ. Tiến Hành Dừng Hệ Thống!",
+            "login": {
+                "reject": "Không Thể Đăng Nhập, Lỗi: %1",
+                "force": "Đang Tiến Hành Tái Đăng Nhập Lại!",
+                "success": "Đang Nhập Thành Công, Tài Khoản: %1",
+                "notFoundUserID": "Không Thể Tìm Thấy ID Tài Khoản!",
+                "region": "Đang Ở Khu Vực: %1",
+                "notRegion": "Không Thể Xác Định Khu Vực!",
+                "logout": "Tài Khoản Đã Bị Mất Kết Nối!",
+                "reconnect": "Đang Tiến Hành Đăng Nhập!",
+                "error": "Không Thể Đăng Nhập Lại, Đang Tự Tắt!"
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "system": {
+        "restart": "Đang Khởi Động Lại...",
+        "config": {
+            "reload": {
+                "success": "Cập Nhật Config Thành Công!",
+                "error": "Cập Nhật Config Thất Bại, Lỗi: %1"
+            }
+        }
+    }
+}
