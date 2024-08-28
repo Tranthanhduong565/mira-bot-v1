@@ -22,58 +22,105 @@ function color(text) {
     }
 }
 
-function parseDir(dir, input) {
-    var { language } = require("../../config.json").systemOptions;
-    var languagePath = __dirname + "/../languages/" + language + ".json";
+function parseDir(dir, inputs = []) {
+    try {
+        var { language } = require("../../config.json").systemOptions;
+        var languagePath = __dirname + "/../languages/" + language + ".json";
 
-    if (!existsSync(languagePath)) {
-        languagePath = __dirname + "/../languages/vi.json";
-    }
+        if (!existsSync(languagePath))
+            languagePath = __dirname + "/../languages/vi-VN.json";
 
-    var languageData = require(languagePath);
-    var ArrayKey = dir.split(".");
-    var content = languageData;
+        if (/^([^.]+)(\.[^.]+)*$/.test(dir)) {
+            var languageData = require(languagePath);
+            var ArrayKey = dir.split(".");
+            var content = languageData;
 
-    for (var key of ArrayKey) {
-        content = content[key];
-    }
+            for (var key of ArrayKey)
+                content = content[key];
 
-    if (input.length > 0) {
-        for (var index = 1; index <= input.length; index++) {
-            content = content.replace("%" + index, input[index - 1]);
+            if (inputs.length > 0) {
+                for (var index = 1; index <= inputs.length; index++)
+                    content = content.replace("%" + index, inputs[index - 1]);
+            }
+
+            return content;
         }
+        return dir;
+    } catch (error) {
+        console.log(error);
+        return dir;
     }
-
-    return content;
 }
 
-function info(dir, ...input) {
-    input = !input ? [] : input;
+function info(dir, ...inputs) {
+    inputs = !inputs ? [] : inputs;
     var time = getTime();
-    var content = parseDir(dir, input);
+    var content = parseDir(dir, inputs);
     var output = color("[ " + time + " ] ").green + content;
     return console.log(output);
 }
 
-function warn(dir, ...input) {
-    input = !input ? [] : input;
+function warn(dir, ...inputs) {
+    inputs = !inputs ? [] : inputs;
     var time = getTime();
-    var content = parseDir(dir, input);
+    var content = parseDir(dir, inputs);
     var output = color("[ " + time + " ] ").yellow + content;
     return console.log(output);
 }
 
-function error(dir, ...input) {
-    input = !input ? [] : input;
+function error(dir, ...inputs) {
+    inputs = !inputs ? [] : inputs;
     var time = getTime();
-    var content = parseDir(dir, input);
+    var content = parseDir(dir, inputs);
     var output = color("[ " + time + " ] ").red + content;
     return console.log(output);
+}
+
+function wall() {
+    var content = color("====================================================").blue;
+    return console.log(content);
+}
+
+function input(dir, col = "green", timeout = 30000) {
+    var time = getTime();
+    var content = parseDir(dir, []);
+    var output = color("[ " + time + " ] ")[col] + content;
+    process.stdout.write(output);
+    return new Promise((resolve, reject) => {
+        var data = "";
+        var inputReceived = false;
+        var timer = setTimeout(() => {
+            if (!inputReceived) {
+                process.stdout.write("\n");
+                resolve(data.trim());
+            }
+        }, timeout);
+        process.stdin.setEncoding("utf8");
+        process.stdin.on("data", (chunk) => {
+            clearTimeout(timer);
+            data += chunk;
+            inputReceived = true;
+            process.stdin.pause();
+            resolve(data.trim());
+        });
+        process.stdin.on("error", (err) => {
+            clearTimeout(timer);
+            reject(err);
+        });
+        process.stdin.on("end", () => {
+            clearTimeout(timer);
+            resolve(data.trim());
+        });
+        process.stdin.resume();
+    });
 }
 
 module.exports = {
     info,
     warn,
     error,
-    color
+    wall,
+    color,
+    input,
+    parseDir
 }

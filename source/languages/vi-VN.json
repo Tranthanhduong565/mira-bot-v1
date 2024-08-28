@@ -1,43 +1,67 @@
 {
-    "system": {
-        "process": {
-            "start": {
-                "message": "Đang Khởi Chạy Mã Nguồn Mira!",
-                "version": "Phiên Bản Mã Nguồn: %1"
-            },
-            "exit": "Đang Tắt Mã Nguồn, Mã: %1",
-            "restart": "Đang Khởi Động Lại..."
+    "process": {
+        "name": "Mã Nguồn: %1",
+        "version": "Phiên Bản: %1",
+        "restart": "Khởi Động Lại Sau: %1ms",
+        "restarting": "Đang Khởi Động Lại...",
+        "exit": "Đã Tắt Hệ Thống Với Mã: %1"
+    },
+    "database": {
+        "authenticate": {
+            "type": "DataBase: %1",
+            "error": "Không Thể Kết Nối DataBase %1, Lỗi: %2"
         },
-        "update": {
-            "newVersionAvailable": "Phiên Bản %1 Đã Được Công Bố, Nguồn: %2",
-            "notNewVersionAvailable": "Bạn Đang Xử Dụng Phiên Bản Mới Nhất. Chúc Bạn 1 Ngày Tốt Lành!",
-            "auto": "Đang Tự Động Cập Phiên Bản. Vui Lòng Không Tắt Mã Nguồn Đến Khi Cập Nhật Xong!",
-            "success": "Đã Cập Nhật Thành Công. Hệ Thống Sẽ Tự Khởi Động Lại Sau 5s!",
-            "error": "Không Thể Cập Nhật Mã Nguồn, Lỗi: %1"
-        },
-        "config": {
-            "reload": {
-                "success": "Cập Nhật Config Thành Công!",
-                "error": "Cập Nhật Config Thất Bại, Lỗi: %1"
-            },
-            "missing": {
-                "information": "Không Tìm Thấy Thông Tin Tài Khoản!"
-            }
-        },
-        "facebook": {
-            "checkpoint": "Bạn Đã Bật Checkpoint. Vui Lòng Xác Duyệt!",
-            "missTimeCheckpoint": "Hết Thời Gian Chờ. Tiến Hành Dừng Hệ Thống!",
-            "login": {
-                "reject": "Không Thể Đăng Nhập, Lỗi: %1",
-                "force": "Đang Tiến Hành Tái Đăng Nhập Lại!",
-                "success": "Đang Nhập Thành Công, Tài Khoản: %1",
-                "notFoundUserID": "Không Thể Tìm Thấy ID Tài Khoản!",
-                "region": "Đang Ở Khu Vực: %1",
-                "notRegion": "Không Thể Xác Định Khu Vực!",
-                "logout": "Tài Khoản Đã Bị Mất Kết Nối!",
-                "reconnect": "Đang Tiến Hành Đăng Nhập!",
-                "error": "Không Thể Đăng Nhập Lại, Đang Tự Tắt!"
-            }
+        "reAuthenticated": "Đang Kết Nối Lại DataBase: %1",
+        "model": "Kết Nối Model: %1",
+        "create": {
+            "success": "Đã Tạo Dữ Liệu Cho: %1",
+            "fail": "Không Thể Tạo Dữ Liệu Cho %1, Lỗi: %2"
         }
-    }
+    },
+    "dashboard": {
+        "port": "Cổng: %1",
+        "ip": "IP: %1",
+        "host": "URL: %1"
+    },
+    "facebook": {
+        "login": {
+            "user": "Tài Khoản: %1",
+            "notUser": "Không Tìm Thấy Tài Khoản.",
+            "region": "Khu Vực: %1",
+            "notRegion": "Không Thể Xác Định Khu Vực.",
+            "error": "Không Thể Đăng Nhập.",
+            "wrong": "Sai Thông Tin Đăng Nhập.",
+            "missTimeCheckpoint": "Hết Thời Gian Chờ Xét Duyệt.",
+            "checkpoint": "Bạn Đã Bật Checkpoint. Vui Lòng Xét Duyệt.",
+            "reconnect": "Đang Đăng Nhập Lại.",
+            "logout": "Đã Bị Mất Kết Nối.",
+            "checkpointImage": "Bạn Đã Bật Checkpoint Photo. Vui Lòng Đăng Nhập Lại Bằng Cookie..."
+        },
+        "relogin": {
+            "force": "Đang Đăng Nhập Lại.",
+            "error": "Không Thể Đăng Nhập Lại."
+        },
+        "missing": "Thiếu Thông Tin Đăng Nhập.",
+        "apis": "Tải Thành Công: %1 APIs",
+        "access": {
+            "token": "Token: %1",
+            "error": "Không Thể Lấy Token, Lỗi: %1",
+            "codeSMS": "Mã: ",
+            "checkpoint": "Bạn Đã Bật Checkpoint.",
+            "wrongSMS": "Sai Mã."
+        },
+        "refreshCookie": "Đã Làm Mới: %1"
+    },
+    "control": {
+        "modules": {
+            "len": "Tải Thành Công %1 Modules.",
+            "reload": "Đã Cập Nhật %1."
+        },
+        "model": "Kết Nối Model Control Thành Công!",
+        "Client": {
+            "connect": "Mqtt Kết Nối Thành Công!",
+            "error": "Mqtt Đã Xảy Ra Lỗi: %1"
+        }
+    },
+    "update": {} 
 }

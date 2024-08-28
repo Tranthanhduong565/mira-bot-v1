@@ -1,11 +1,72 @@
 {
-    "system": {
-        "restart": "Đang Khởi Động Lại...",
-        "config": {
-            "reload": {
-                "success": "Cập Nhật Config Thành Công!",
-                "error": "Cập Nhật Config Thất Bại, Lỗi: %1"
-            }
+    "process": {
+        "name": "Source: %1",
+        "version": "Version: %1",
+        "restart": "Restart After: %1ms",
+        "restarting": "Restarting...",
+        "exit": "Shutdown With Code: %1"
+    },
+    "database": {
+        "authenticate": {
+            "type": "DataBase: %1",
+            "error": "Unable To Connect To DataBase %1, Error: %2"
+        },
+        "reAuthenticated": "Reconnecting To DataBase: %1",
+        "model": "Connect Model: %1",
+        "create": {
+            "success": "Created Data For: %1",
+            "fail": "Unable To Create Data For %1, Error: %2"
+        }
+    },
+    "dashboard": {
+        "port": "Port: %1",
+        "ip": "IP: %1",
+        "host": "URL: %1"
+    },
+    "facebook": {
+        "login": {
+            "user": "User: %1",
+            "notUser": "User Undefined.",
+            "region": "Region: %1",
+            "notRegion": "Cant Detemined Region.",
+            "error": "Cant Login.",
+            "wrong": "Wrong Login Information.",
+            "missTimeCheckpoint": "Approve Waiting Time Expired.",
+            "checkpoint": "You Have Checkpoint Enabled. Please Approve.",
+            "reconnect": "Reconnecting.",
+            "logout": "Connection Lost.",
+            "checkpointImage": "You Have Enabled Checkpoint Visuals. Please Login Again Using Cookie..."
+        },
+        "relogin": {
+            "force": "Reconnecting.",
+            "error": "Cant Login Again."
+        },
+        "missing": "Missing Login Information.",
+        "apis": "Loaded: %1 APIs",
+        "access": {
+            "token": "Token: %1",
+            "error": "Cant Get Token, Error: %1",
+            "codeSMS": "Code: ",
+            "checkpoint": "You Have Enabled Checkpoint.",
+            "wrongSMS": "Wrong Code."
+        },
+        "refreshCookie": "Refreshed: %1"
+    },
+    "control": {
+        "modules": {
+            "len": "Success Loaded %1 Modules",
+            "reload": "Reloaded %1."
+        },
+        "model": {
+            "connect": "Model Control Connection Successful!",
+            "notExist": "Command \"%1\" does not exist, is it \"%2\"?",
+            "noPluginCalled": "Use %1help list to see a list of commands!",
+            "userBanned": "You are unable to use bot!\nReason: %1\nBan at: %2",
+            "threadBanned": "Your thread are unable to use bot!\nReason: %1\nBan at: %2"
+        },
+        "Client": {
+            "connect": "Mqtt Connection Successful!",
+            "error": "Mqtt An Error Occurred: %1"
         }
     }
 }

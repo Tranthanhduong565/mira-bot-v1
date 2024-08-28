@@ -1,10 +1,10 @@
 {
   "name": "mira-bot-v1",
-  "version": "beta-0.2.0",
+  "version": "beta-1.0.1",
   "description": "Simple Chatbot Messenger",
   "main": "source/mira.js",
   "scripts": {
-    "start": "node source/index.js"
+    "start": "node -e \"process.platform === 'win32' ? console.clear() : require('child_process').execSync('clear')\" && node source/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,10 +28,21 @@
   },
   "dependencies": {
     "axios": "^1.7.2",
-    "cheerio": "^1.0.0-rc.12",
-    "mqtt": "^5.9.0",
+    "cheerio": "^1.0.0",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-ws": "^5.0.2",
+    "https-proxy-agent": "^7.0.5",
+    "moment-timezone": "^0.5.45",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.2",
+    "mqtt": "^5.9.1",
+    "mqtt-packet": "^9.0.0",
     "puppeteer": "^22.14.0",
     "request": "^2.88.2",
+    "sequelize": "^6.37.3",
+    "sqlite3": "^5.1.7",
     "websocket-stream": "^5.5.2"
   }
 }

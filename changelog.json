@@ -1,1 +1,33 @@
-{}
+{
+    "beta-1.0.1": {
+        "source/database/index.js": [],
+        "source/database/model/thread.mongodb.js": [],
+        "source/database/model/thread.sqlite3.js": [],
+        "source/database/model/user.mongodb.js": [],
+        "source/database/model/user.sqlite3.js": [],
+        "source/languages/en-US.json": [],
+        "source/languages/vi-VN.json": [],
+        "source/lib/log.js": [],
+        "source/lib/utils.json": [],
+        "source/control/index.js": [],
+        "source/control/model.js": [],
+        "source/mira.js": [],
+        "source/apis/utils.js": [],
+        "source/apis/lib/changeAvatar.js": [],
+        "source/apis/lib/chanegBio.js": [],
+        "source/apis/lib/changeCover.js": [],
+        "source/apis/lib/Client.js": [],
+        "source/apis/lib/getAccessToken.js": [],
+        "source/apis/lib/getCurrentUserID.js": [],
+        "source/apis/lib/getThreadInfo.js": [],
+        "source/apis/lib/getUserID.js": [],
+        "source/apis/lib/logout.js": [],
+        "source/apis/lib/markAsDelivered.js": [],
+        "source/apis/lib/markAsRead.js": [],
+        "source/apis/lib/Messenger.js": [],
+        "source/apis/lib/muteThread.js": [],
+        "source/apis/lib/post.js": [],
+        "source/apis/lib/resolvePhotoUrl.js": [],
+        "source/apis/lib/screenshot.js": []
+    }
+}

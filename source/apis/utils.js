@@ -22,10 +22,9 @@ function setHeaders(url, ctx, customHeaders) {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (Kbody, like Gecko) Chrome/127.0.0.0 Safari/537.36",
         Connection: "keep-alive",
         "sec-fetch-site": "same-origin"
-    };
-    if (customHeaders) {
-        Object.assign(headers, customHeaders);
     }
+    if (customHeaders)
+        Object.assign(headers, customHeaders);
     if (customHeaders && customHeaders.noRef) {
         delete headers.Referer;
         delete headers.noRef;
@@ -83,7 +82,7 @@ function post(url, jar, form, ctx, customHeaders) {
     return returnPromise;
 }
 
-function postData(url, jar, form, qs, ctx, customHeaders) {
+function postData(url, jar, formData, qs, ctx, customHeaders) {
     if (utilsLib.getType(qs) === "Object") {
         for (var prop in qs) {
             if (qs.hasOwnProperty(prop) && utilsLib.getType(qs[prop]) === "Object") {
@@ -98,7 +97,7 @@ function postData(url, jar, form, qs, ctx, customHeaders) {
         timeout: 60000,
         url,
         method: "POST",
-        formData: form,
+        formData,
         qs,
         jar,
         gzip: true
@@ -114,7 +113,7 @@ function postData(url, jar, form, qs, ctx, customHeaders) {
 }
 
 function isReadableStream(maybeStream) {
-    return (maybeStream instanceof stream.Stream && (utilsLib.getType(maybeStream._read) === "Function" || utilsLib.getType(maybeStream._read) === "AsyncFunction") && utilsLib.getType(maybeStream._readableState) === "Object");
+    return (maybeStream instanceof stream.Stream && typeof maybeStream._read === "function" && utilsLib.getType(maybeStream._readableState) === "Object");
 }
 
 function getGUID() {
@@ -135,31 +134,30 @@ function getSignatureID() {
 function makeDefaults(body, userID, ctx) {
     var reqCounter = 1;
     var fb_dtsg = /\["DTSGInitData",\[],{"token":"(\S+)","async_get_token"/g.exec(body)[1];
-    var ttstamp = "2";
-    for (var i = 0; i < fb_dtsg.length; i++) {
-        ttstamp += fb_dtsg.charCodeAt(i);
-    }
     var revision = /"server_revision":(\d+)/g.exec(body)[1];
 
     function mergeWithDefaults(Obj) {
+        fb_dtsg = ctx.fb_dtsg ? ctx.fb_dtsg : fb_dtsg
+        var ttstamp = "2";
+        for (var i = 0; i < fb_dtsg.length; i++) {
+            ttstamp += fb_dtsg.charCodeAt(i);
+        }
         var newObj = {
             av: userID,
             __user: userID,
             __req: (reqCounter++).toString(36),
             __rev: revision,
             __a: 1,
-            fb_dtsg: ctx.fb_dtsg ? ctx.fb_dtsg : fb_dtsg,
+            fb_dtsg,
             jazoest: ctx.ttstamp ? ctx.ttstamp : ttstamp
         }
-        if (!Obj) return newObj;
+        if (!Obj)
+            return newObj;
 
-        for (var prop in Obj) {
-            if (Obj.hasOwnProperty(prop)) {
-                if (!newObj[prop]) {
+        for (var prop in Obj)
+            if (Obj.hasOwnProperty(prop))
+                if (!newObj[prop])
                     newObj[prop] = Obj[prop];
-                }
-            }
-        }
 
         return newObj;
     }
@@ -184,11 +182,11 @@ function makeDefaults(body, userID, ctx) {
 }
 
 function makeParsable(body) {
-	var withoutForLoop = body.replace(/for\s*\(\s*;\s*;\s*\)\s*;\s*/, "");
-	var maybeMultipleObjects = withoutForLoop.split(/\}\r\n *\{/);
-	if (maybeMultipleObjects.length === 1) 
+    var withoutForLoop = body.replace(/for\s*\(\s*;\s*;\s*\)\s*;\s*/, "");
+    var maybeMultipleObjects = withoutForLoop.split(/\}\r\n *\{/);
+    if (maybeMultipleObjects.length === 1)
         return maybeMultipleObjects;
-	return "[" + maybeMultipleObjects.join("},{") + "]";
+    return "[" + maybeMultipleObjects.join("},{") + "]";
 }
 
 function parseAndCheckLogin(ctx, http, retryCount) {
@@ -267,7 +265,7 @@ function parseAndCheckLogin(ctx, http, retryCount) {
                         ctx.fb_dtsg = arr[i][3][0];
 
                         ctx.ttstamp = "2";
-                        for (let j = 0; j < ctx.fb_dtsg.length; j++) {
+                        for (var j = 0; j < ctx.fb_dtsg.length; j++) {
                             ctx.ttstamp += ctx.fb_dtsg.charCodeAt(j);
                         }
                     }
@@ -276,16 +274,80 @@ function parseAndCheckLogin(ctx, http, retryCount) {
 
             if (res.error === 1357001) {
                 var err = new Error('Facebook blocked login. Please visit https://facebook.com and check your account.');
-                err.error = "Logout.";
+                err.type = "Logout.";
                 throw err;
             }
             return res;
         }
         return _try(any);
-    };
+    }
 }
 
-module.exports = {
+function formatID(id) {
+    if (id != undefined && id != null) {
+        return id.replace(/(fb)?id[:.]/, "");
+    }
+    else {
+        return id;
+    }
+}
+
+function getDTSGInitData(ctx) {
+    return get("https://www.facebook.com", ctx.jar)
+        .then(function (res) {
+            var body = res.body;
+            ctx.fb_dtsg = /\["DTSGInitData",\[],{"token":"(.+?)"/g.exec(body)[1];
+        });
+}
+
+function binaryToDecimal(data) {
+    var ret = "";
+    while (data !== "0") {
+        var end = 0;
+        var fullName = "";
+        var i = 0;
+        for (; i < data.length; i++) {
+            end = 2 * end + parseInt(data[i], 10);
+            if (end >= 10) {
+                fullName += "1";
+                end -= 10;
+            } else
+                fullName += "0";
+        }
+        ret = end.toString() + ret;
+        data = fullName.slice(fullName.indexOf("1"));
+    }
+    return ret;
+}
+
+function generateOfflineThreadingID() {
+    var ret = Date.now();
+    var value = Math.floor(Math.random() * 4294967295);
+    var str = ("0000000000000000000000" + value.toString(2)).slice(-22);
+    var message = ret.toString(2) + str;
+    return binaryToDecimal(message);
+}
+
+function generateTimestampRelative() {
+    var d = new Date();
+    return d.getHours() + ":" + padZeros(d.getMinutes());
+}
+
+function padZeros(val, len) {
+    val = String(val);
+    len = len || 2;
+    while (val.length < len) val = "0" + val;
+    return val;
+}
+
+function generateThreadingID(clientID) {
+	var k = Date.now();
+	var l = Math.floor(Math.random() * 4294967295);
+	var m = clientID;
+	return "<" + k + ":" + l + "-" + m + "@mail.projektitan.com>";
+}
+
+var utils = {
     getJar: request.jar,
     cookie: request.cookie,
     setProxy,
@@ -297,5 +359,14 @@ module.exports = {
     getGUID,
     getSignatureID,
     makeDefaults,
-    parseAndCheckLogin
+    parseAndCheckLogin,
+    formatID,
+    getDTSGInitData,
+    generateOfflineThreadingID,
+    generateTimestampRelative,
+    generateThreadingID
 }
+
+Object.assign(utils, utilsLib);
+
+module.exports = utils;

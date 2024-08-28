@@ -4,66 +4,91 @@ process.on("uncaughtException", console.log);
 var log = require("./lib/log");
 var utils = require("./lib/utils");
 var config = require("../config.json");
-var configCommands = require("../configCommands.json");
 
 var fs = require("fs");
+var path = require("path");
 var axios = require("axios");
 
-var dirConfig = __dirname + "/../config.json";
-var dirConfigCommand = __dirname + "/../configCommands.json";
+var dirConfig = path.resolve(__dirname, "..", "config.json");
+var dirConfigCommands = path.resolve(__dirname, "..", "configCommands.json");
+
+function mergeObjects(target, source) {
+    for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+            if (source[key] === null || source[key] === undefined)
+                delete target[key];
+            else if (typeof source[key] === "object" && !Array.isArray(source[key]) && source[key] !== null) {
+                if (!target[key] || typeof target[key] !== "object" || Array.isArray(target[key]))
+                    target[key] = {}
+                mergeObjects(target[key], source[key]);
+            } else
+                target[key] = source[key];
+        }
+    }
+    return target;
+}
+
+function mergeObjectsPrimitives(target, source) {
+    for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+            if (typeof source[key] !== "object" || Array.isArray(source[key]) || source[key] === null) {
+                if (target.hasOwnProperty(key))
+                    target[key] = source[key];
+            } else if (typeof target[key] === "object" && target[key] !== null && !Array.isArray(target[key]))
+                mergeObjectsPrimitives(target[key], source[key]);
+        }
+    }
+    return target;
+}
 
 global.mira = {
+    dir: path.resolve(__dirname, ".."),
     dirConfig,
-    dirConfigCommand,
-    configCommands,
-    config,
-    apis: null
+    dirConfigCommands,
+    get configCommands() {
+        return require(this.dirConfigCommands);
+    },
+    set configCommands(value) {
+        if (utils.getType(value) === "Object") {
+            var lastConfig = require(this.dirConfigCommands);
+            lastConfig = mergeObjects(lastConfig, value);
+            fs.writeFileSync(this.dirConfigCommands, JSON.stringify(lastConfig, null, 4));
+        }
+    },
+    get config() {
+        return require(this.dirConfig);
+    },
+    set config(value) {
+        if (utils.getType(value) === "Object") {
+            var lastConfig = require(this.dirConfig);
+            lastConfig = mergeObjectsPrimitives(lastConfig, value);
+            fs.writeFileSync(this.dirConfig, JSON.stringify(lastConfig, null, 4));
+        }
+    },
+    apis: null,
+    Client: null
 }
 
 global.modules = {
-    commands: new Map(),
-    eventCommands: new Map(),
-    handlerReply: [],
-    handlerReaction: [],
-    handlerEvents: [],
-    handlerSchedule: []
+    cmds: [],
+    Reply: {},
+    Reaction: {},
+    Schedule: {}
 }
 
 global.database = {
-    model: null,
-    userData: [],
-    threadData: []
+    model: {},
+    cache: []
 }
 
-function trackAndReloadConfig(dir, prop) {
-    var lastReload = fs.statSync(dir).mtimeMs;
-    var isFirstReload = true;
-    fs.watch(dir, type => {
-        if (type === "change") {
-            setTimeout(function () {
-                if (lastReload === fs.statSync(dir).mtimeMs) return;
-                if (isFirstReload) {
-                    isFirstReload = false;
-                    return;
-                }
-
-                var lastConfig = global.mira[prop];
-                try {
-                    delete require.cache[dir];
-                    var newConfig = require(dir);
-                    global.mira[prop] = newConfig;
-                    return log.info("system.config.reload.success");
-                } catch (error) {
-                    global.mira[prop] = lastConfig;
-                    return log.error("system.config.reload.error", error.message);
-                }
-            }, 5000);
-        }
-    });
+function watchAndDeleteCache(dir) {
+    fs.watch(dir, type => type ===  "change" ? (function () {
+        delete require.cache[dir];
+    })() : null);
 }
 
-trackAndReloadConfig(dirConfig, "config");
-trackAndReloadConfig(dirConfigCommand, "configCommands");
+watchAndDeleteCache(dirConfig);
+watchAndDeleteCache(dirConfigCommands);
 
 function compare(str_1, str_2) {
     var bool;
@@ -90,25 +115,32 @@ function compare(str_1, str_2) {
     return bool;
 }
 
-if (config.systemOptions.autoRestart.enable && parseInt(config.systemOptions.autoRestart.timeMS) > 0)
+if (config.systemOptions.autoRestart.enable && parseInt(config.systemOptions.autoRestart.timeMS) > 0) {
+    log.info("process.restart", config.systemOptions.autoRestart.timeMS);
     setTimeout(process.exit, config.systemOptions.autoRestart.timeMS, 2);
+}
 
 (async () => {
+    log.wall();
     var currentVersion = require("../package.json").version;
     var lastVersion = (await axios.get("https://raw.githubusercontent.com/GiaKhang1810/mira-bot-v1/main/package.json")).data.version;
     if (compare(lastVersion, currentVersion)) {
-        log.warn("system.update.newVersionAvailable", lastVersion, "https://github.com/GiaKhang1810/mira-bot-v1/");
+        log.warn("update.newVersion", lastVersion, "https://github.com/GiaKhang1810/mira-bot-v1/");
         if (config.systemOptions.autoUpdate.enable) {
             var type = lastVersion.split("-")[0];
             if (!config.systemOptions.autoUpdate.releaseOnly || config.systemOptions.autoUpdate.releaseOnly && type === "release") {
-                log.warn("system.update.auto");
                 return require("./updater");
             }
         }
-    } else log.info("system.update.notNewVersionAvailable");
-    
-    await require("./apis")();
+    }
 
-    if (config.facebookAPIsOptions.autoRefreshState)
-        fs.writeFileSync(__dirname + "/../" + config.facebookAccountOptions.facebookState, JSON.stringify(global.mira.apis.getAppState(), null, 2));
+    await require("./apis")();
+    if (config.facebookAPIsOptions.autoRefreshState) {
+        fs.writeFileSync(global.mira.dir + "/" + config.facebookAccountOptions.facebookState, JSON.stringify(global.mira.apis.getAppState(), null, 2));
+        log.info("facebook.refreshCookie", config.facebookAccountOptions.facebookState);
+    }
+    log.wall();
+    await require("./database")();
+    await require("./control")();
+    return require("./dashboard");
 })();

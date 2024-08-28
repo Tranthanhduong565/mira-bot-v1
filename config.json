@@ -2,53 +2,61 @@
     "facebookAccountOptions": {
         "email": "",
         "password": "",
-        "whiteID": null,
+        "whiteID": "",
+        "pageID": "",
         "proxy": null,
         "cookies": "",
         "facebookState": "fbstate.json"
     },
+    "dashboardOptions": {
+        "port": 25645,
+        "user": "zpNJSxhCuG@mira.com",
+        "password": "ZU2pXI93sDCT5mIy",
+        "resetAccount": false
+    },
     "botOptions": {
-        "adminOnly": true,
+        "adminOnly": false,
         "name": "Mira",
         "prefix": ",",
         "adminIDs": [
-            100036947774673
+            100036947774673,
+            100035731083424
         ]
     },
     "facebookAPIsOptions": {
-        "autoSeenMessage": true,
-        "autoRestartListenMQTT": true,
         "autoReconnect": true,
-        "listenMessage": true,
-        "listenNotification": true,
         "listenSelf": true,
-        "listenEventSelf": true,
-        "listenEvent": true,
-        "forceLogin": false,
-        "autoRefreshState": true
+        "listenNotif": true,
+        "listenEventsSelf": true,
+        "listenEvents": true,
+        "forceLogin": true,
+        "autoRefreshState": true,
+        "online": true,
+        "updatePresence": true,
+        "autoMarkDelivery": true
     },
     "systemOptions": {
         "time_zone": "Asia/Ho_Chi_Minh",
-        "language": "vi-VN",
+        "language": "en-US",
         "autoUpdate": {
             "enable": true,
-            "releaseOnly": true 
+            "releaseOnly": true
         },
         "autoRestart": {
             "enable": true,
             "timeMS": 3600000
         },
-        "autoLoadCommands": {
+        "autoLoadPlugins": {
             "enable": true,
-            "exceptions": []
+            "ignore": []
         },
-        "autoReloadCommands": {
+        "autoReloadPlugins": {
             "enable": true,
-            "exceptions": []
+            "ignore": []
         },
-        "database": {
+        "DataBase": {
             "type": "sqlite",
-            "mongoURI": ""
+            "mongoURI": "mongodb+srv://GiaKhang1810:Promaxcapdo123@mira.kcuhmnf.mongodb.net/?retryWrites=true&w=majority&appName=Mira"
         }
     }
 }
