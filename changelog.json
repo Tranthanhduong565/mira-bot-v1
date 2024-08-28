@@ -8,7 +8,7 @@
         "source/languages/en-US.json": [],
         "source/languages/vi-VN.json": [],
         "source/lib/log.js": [],
-        "source/lib/utils.json": [],
+        "source/lib/utils.js": [],
         "source/control/index.js": [],
         "source/control/model.js": [],
         "source/mira.js": [],
