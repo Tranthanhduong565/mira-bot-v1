@@ -52,6 +52,7 @@ async function Writer() {
         }
         fs.writeFileSync(pathWrite, data);
     }
+    return process.exit(2);
 }
 
 (async () => {
