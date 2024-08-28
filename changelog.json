@@ -14,7 +14,7 @@
         "source/mira.js": [],
         "source/apis/utils.js": [],
         "source/apis/lib/changeAvatar.js": [],
-        "source/apis/lib/chanegBio.js": [],
+        "source/apis/lib/changeBio.js": [],
         "source/apis/lib/changeCover.js": [],
         "source/apis/lib/Client.js": [],
         "source/apis/lib/getAccessToken.js": [],
