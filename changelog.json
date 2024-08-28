@@ -29,5 +29,20 @@
         "source/apis/lib/post.js": [],
         "source/apis/lib/resolvePhotoUrl.js": [],
         "source/apis/lib/screenshot.js": []
+    },
+    "beta-1.0.2": {
+        "source/control/model.js": [
+            "Add new function: Reply, React",
+            "Edit function: Main, Events"
+        ],
+        "source/mira.js": [
+            "Change global.modules.Reaction to global.modules.React"
+        ],
+        "source/apis/lib/Client.js": [
+            "Fix bug 2 send message"
+        ],
+        "source/control/index.js": [
+            "Edit Client message"
+        ]
     }
 }
