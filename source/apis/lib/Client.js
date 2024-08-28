@@ -441,14 +441,15 @@ function parseAndReCallback(http, apis, ctx, globalCallback, deltails) {
             for (var i in ClientPayload.deltas) {
                 var delta = ClientPayload.deltas[i];
 
-                if (delta.deltaMessageReaction && ctx.globalOptions.listenEvents) {
+                if (delta.deltaMessageReaction && ctx.globalOptions.listenEvents && !!delta.deltaMessageReaction.offlineThreadingId) {
                     var reaction = {
                         type: "message_reaction",
                         threadID: (delta.deltaMessageReaction.threadKey.threadFbId ? delta.deltaMessageReaction.threadKey.threadFbId : delta.deltaMessageReaction.threadKey.otherUserFbId).toString(),
                         messageID: delta.deltaMessageReaction.messageId,
                         reaction: delta.deltaMessageReaction.reaction,
                         senderID: delta.deltaMessageReaction.senderId.toString(),
-                        userID: (delta.deltaMessageReaction.userId || delta.deltaMessageReaction.senderId).toString()
+                        userID: (delta.deltaMessageReaction.userId || delta.deltaMessageReaction.senderId).toString(),
+                        isGroup: !!delta.deltaMessageReaction.threadKey.threadFbId,
                     }
                     globalCallback(null, reaction);
                 } else if (delta.deltaRecallMessageData && ctx.globalOptions.listenEvents) {
