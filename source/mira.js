@@ -125,7 +125,7 @@ if (config.systemOptions.autoRestart.enable && parseInt(config.systemOptions.aut
     var currentVersion = require("../package.json").version;
     var lastVersion = (await axios.get("https://raw.githubusercontent.com/GiaKhang1810/mira-bot-v1/main/package.json")).data.version;
     if (compare(lastVersion, currentVersion)) {
-        log.warn("update.newVersion", lastVersion, "https://github.com/GiaKhang1810/mira-bot-v1/");
+        log.warn("updater.newVersion", lastVersion, "https://github.com/GiaKhang1810/mira-bot-v1/");
         if (config.systemOptions.autoUpdate.enable) {
             var type = lastVersion.split("-")[0];
             if (!config.systemOptions.autoUpdate.releaseOnly || config.systemOptions.autoUpdate.releaseOnly && type === "release") {
