@@ -63,5 +63,8 @@
             "error": "Mqtt Đã Xảy Ra Lỗi: %1"
         }
     },
-    "update": {} 
+    "updater": {
+        "newVersion": "Phiên Bản %1 Đã Chính Thức Ra Mắt, Link: https://github.com/GiaKhang1810/mira-bot-v1/blob/main/changelog.json",
+        "error": "Không Thể Cập Nhật, Vui Lòng Cập Nhật Thủ Công, Lỗi: %1"
+    } 
 }
