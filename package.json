@@ -4,7 +4,7 @@
   "description": "Simple Chatbot Messenger",
   "main": "source/mira.js",
   "scripts": {
-    "start": "node -e \"process.platform === 'win32' ? console.clear() : require('child_process').execSync('clear')\" && node source/index.js"
+    "start": "node source/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "linux"
   ],
   "engines": {
-    "node": "16.x",
+    "node": ">=16.x",
     "npm": ">=7.0.0"
   },
   "dependencies": {
