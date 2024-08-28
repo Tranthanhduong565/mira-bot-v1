@@ -1,7 +1,6 @@
 var { spawn } = require("child_process");
 var { version, name } = require("../package.json");
 var log = require("./lib/log");
-console.clear();
 
 function RunSystem() {
     log.wall();
