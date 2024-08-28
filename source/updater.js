@@ -35,7 +35,7 @@ async function Writer() {
         var res = await axios.get(url, { responseType: ext === "binary" ? "arraybuffer" : "text" });
         var data;
         var pathWrite = path.resolve(dir, param);
-        var Dir = path.dirname();
+        var Dir = path.dirname(pathWrite);
         if (!fs.existsSync(Dir))
             fs.mkdirSync(Dir, { recursive: true });
 
