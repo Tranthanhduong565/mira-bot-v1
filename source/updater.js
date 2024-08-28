@@ -4,6 +4,7 @@ var path = require("path");
 var fs = require("fs");
 var dir = path.resolve(__dirname, "..") + "/";
 var log = require("./lib/log");
+var { execSync } = require("child_process");
 var changelog;
 
 function getExtension(param) {
@@ -52,13 +53,29 @@ async function Writer() {
         }
         fs.writeFileSync(pathWrite, data);
     }
-    return process.exit(2);
+    return;
+}
+
+async function finishedUpdate() {
+    var url = uri + "package.json";
+    var res = await axios.get(url);
+    var data = JSON.stringify(res.data, null, 4);
+    var pathWrite = path.resolve(dir, "package.json");
+    fs.writeFileSync(pathWrite, data);
+    execSync("npm install", {
+        cwd: __dirname,
+        stdio: "inherit",
+        shell: true
+    });
+    return;
 }
 
 (async () => {
     try {
         await readChangelog();
         await Writer();
+        await finishedUpdate();
+        process.exit(2);
     } catch (error) {
         log.error("updater.error", error.message);
         console.log(error);
