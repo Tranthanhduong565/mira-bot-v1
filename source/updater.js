@@ -41,7 +41,7 @@ async function Writer() {
 
         switch (ext) {
             case "json":
-                data = JSON.stringify(res.data, null, 4);
+                data = JSON.stringify(JSON.parse(res.data), null, 4);
                 break;
             case "text":
                 data = res.data;
