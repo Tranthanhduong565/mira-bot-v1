@@ -162,13 +162,25 @@ async function Main(info) {
 
     Messenger.getText = getText;
 
+    function Reply(messageID) {
+        return data => global.modules.Reply[messageID] = { plugin: namePlg, ...data }
+    }
+
+    function React(messageID) {
+        return data => global.modules.React[messageID] = { plugin: namePlg, ...data }
+    }
+
     var util = {
         args,
         Messenger,
         events: info,
         ...model,
-        apis: subAPIs
+        apis: subAPIs,
+        Reply,
+        React
     }
+
+    pl.env = { ...global.mira.configCommands[namePlg] }
 
     try {
         pl.Main(util);
@@ -237,13 +249,28 @@ async function Events(info) {
 
         Messenger.getText = getText;
 
+        function Reply(messageID) {
+            return subData => global.modules.Reply[messageID] = { plugin: item[0], ...subData }
+        }
+    
+        function React(messageID) {
+            return subData => global.modules.React[messageID] = { plugin: item[0], ...subData }
+        }
+    
+        delete Reply[messageID];
+    
         var util = {
             args,
             Messenger,
             events: info,
             ...model,
-            apis: subAPIs
+            apis: subAPIs,
+            Reply,
+            React,
+            ReplyData: data
         }
+
+        pl.env = { ...global.mira.configCommands[item[0]] }
 
         try {
             pl.Events(util);
@@ -254,7 +281,181 @@ async function Events(info) {
 }
 
 async function Reply(info) {
-    
+    var allCMD = [...global.modules.cmds];
+    var { adminOnly, adminIDs } = global.mira.config.botOptions;
+    var { messageID } = info.messageReply;
+    var { Reply } = global.modules;
+    var { language } = global.mira.config.systemOptions;
+    var { User, Thread } = model;
+
+    if (!Reply[messageID])
+        return;
+
+    var { senderID, threadID, isGroup } = info;
+    var userData = await User.findOne(senderID);
+    var userID = parseInt(senderID);
+
+    if (adminOnly && !adminIDs.includes(userID))
+        return;
+
+    if (isGroup) {
+        var threadData = await Thread.findOne(threadID);
+        if (threadData.banAt > 0 && !adminIDs.includes(userID))
+            return;
+    }
+
+    if (userData.banAt > 0 && !adminIDs.includes(userID))
+        return;
+
+    var { plugin, ...data } = Reply[messageID];
+    var args = info.body.trim().split(/\s+/);
+    var pl = allCMD.find(item => item[0] === plugin)[1];
+    var Messenger = utils.createMessenger(apis, info);
+    var Langs = pl.Langs[language] || pl.Langs[Object.keys(pl.Langs)[0]];
+
+    function getText(dir, inputs) {
+        try {
+            if (Langs.hasOwnProperty(dir)) {
+                var content = Langs[dir];
+
+                if (inputs.length > 0) {
+                    for (var index = 1; index <= inputs.length; index++)
+                        content = content.replace("%" + index, inputs[index - 1]);
+                }
+
+                content = content.replace(/{p}|{n}/g, match => match === "{p}" ? prefix : namePlg);
+                return content;
+            }
+            return dir;
+        } catch (error) {
+            console.log(error);
+            return dir;
+        }
+    }
+
+    var subAPIs = { ...apis }
+
+    for (var api of bannedAPIs)
+        delete subAPIs[api];
+
+    Messenger.getText = getText;
+
+    function ReplySupport(messageID) {
+        return subData => global.modules.Reply[messageID] = { plugin, ...subData }
+    }
+
+    function ReactSupport(messageID) {
+        return subData => global.modules.React[messageID] = { plugin, ...subData }
+    }
+
+    delete Reply[messageID];
+
+    var util = {
+        args,
+        Messenger,
+        events: info,
+        ...model,
+        apis: subAPIs,
+        Reply: ReplySupport,
+        React: ReactSupport,
+        ReplyData: data
+    }
+
+    pl.env = { ...global.mira.configCommands[plugin] }
+
+    try {
+        pl.Reply(util);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function React(info) {
+    var allCMD = [...global.modules.cmds];
+    var { adminOnly, adminIDs } = global.mira.config.botOptions;
+    var { messageID } = info;
+    var { React } = global.modules;
+    var { language } = global.mira.config.systemOptions;
+    var { User, Thread } = model;
+
+    if (!React[messageID])
+        return;
+
+    var { userID, threadID, isGroup } = info;
+    var userData = await User.findOne(userID);
+    var senderID = parseInt(userID);
+
+    if (adminOnly && !adminIDs.includes(senderID))
+        return;
+
+    if (isGroup) {
+        var threadData = await Thread.findOne(threadID);
+        if (threadData.banAt > 0 && !adminIDs.includes(senderID))
+            return;
+    }
+
+    if (userData.banAt > 0 && !adminIDs.includes(userID))
+        return;
+
+    var { plugin, ...data } = React[messageID];
+    var pl = allCMD.find(item => item[0] === plugin)[1];
+    var Messenger = utils.createMessenger(apis, info);
+    var Langs = pl.Langs[language] || pl.Langs[Object.keys(pl.Langs)[0]];
+
+    function getText(dir, inputs) {
+        try {
+            if (Langs.hasOwnProperty(dir)) {
+                var content = Langs[dir];
+
+                if (inputs.length > 0) {
+                    for (var index = 1; index <= inputs.length; index++)
+                        content = content.replace("%" + index, inputs[index - 1]);
+                }
+
+                content = content.replace(/{p}|{n}/g, match => match === "{p}" ? prefix : namePlg);
+                return content;
+            }
+            return dir;
+        } catch (error) {
+            console.log(error);
+            return dir;
+        }
+    }
+
+    var subAPIs = { ...apis }
+
+    for (var api of bannedAPIs)
+        delete subAPIs[api];
+
+    Messenger.getText = getText;
+
+    function ReplySupport(messageID) {
+        return subData => global.modules.Reply[messageID] = { plugin, ...subData }
+    }
+
+    function ReactSupport(messageID) {
+        return subData => global.modules.React[messageID] = { plugin, ...subData }
+    }
+
+    delete React[messageID];
+
+    var util = {
+        Messenger,
+        events: info,
+        ...model,
+        apis: subAPIs,
+        Reply: ReplySupport,
+        React: ReactSupport,
+        ReactData: data
+    }
+
+    pl.env = { ...global.mira.configCommands[plugin] }
+
+    try {
+        pl.React(util);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 module.exports = {
@@ -263,5 +464,7 @@ module.exports = {
         updateDataBase
     },
     Main,
-    Events
+    Events,
+    Reply,
+    React
 }
