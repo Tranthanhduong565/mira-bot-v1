@@ -34,9 +34,10 @@ async function Writer() {
         var url = uri + param;
         var res = await axios.get(url, { responseType: ext === "binary" ? "arraybuffer" : "text" });
         var data;
-        var pathDir = path.dirname(dir + param);
-        if (!fs.existsSync(pathDir))
-            fs.mkdirSync(pathDir, { recursive: true });
+        var pathWrite = path.resolve(dir, param);
+        var Dir = path.dirname();
+        if (!fs.existsSync(Dir))
+            fs.mkdirSync(Dir, { recursive: true });
 
         switch (ext) {
             case "json":
@@ -49,7 +50,7 @@ async function Writer() {
                 data = Buffer.from(res.data, "utf-8");
                 break;
         }
-        fs.writeFileSync(pathDir, data);
+        fs.writeFileSync(pathWrite, data);
     }
 }
 
