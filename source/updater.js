@@ -58,7 +58,7 @@ async function Writer() {
         await readChangelog();
         await Writer();
     } catch (error) {
-        log.error("updater.fail", error.message);
+        log.error("updater.error", error.message);
         console.log(error);
         return process.exit(1);
     }
