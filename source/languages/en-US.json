@@ -68,5 +68,9 @@
             "connect": "Mqtt Connection Successful!",
             "error": "Mqtt An Error Occurred: %1"
         }
+    },
+    "updater": {
+        "newVersion": "Version %1 Has Officially Launched, Link: https://github.com/GiaKhang1810/mira-bot-v1/blob/main/changelog.json",
+        "error": "Unable to Update, Please Update Manually, Error: %1"
     }
 }
