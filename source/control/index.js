@@ -3,6 +3,13 @@ var log = require("../lib/log");
 var fs = require("fs");
 var Child = require("child_process");
 
+var acceptType = [
+    "message",
+    "message_reply",
+    "message_unsend",
+    "message_reaction"
+];
+
 var requiredOptions = {
     name: [
         "String",
@@ -157,7 +164,7 @@ module.exports = function () {
                         try {
                             LoadPlugin(pluginPath);
                             log.info("control.modules.reload", plugin);
-                        } finally {}
+                        } finally { }
                     }, 2000);
                 }
                 fs.watch(pluginPath, type => {
@@ -178,20 +185,16 @@ module.exports = function () {
     global.mira.Client = Client;
     return Client
         .on("message", message => {
-            switch (message.type) {
-                case "message":
+            if (message.type === "event") {
+
+            } else if (acceptType.includes(message.type)) {
+                if (message.type === "message")
                     model.Main(message);
-                case "message_reply":
-                case "message_unsend":
-                    model.db.createDataBase(message);
-                    model.Events(message);
-                    break;
-                case "event":
-                    break;
-                case "message_reaction":
-                    break;
-                default:
-                    break;
+                if (message.type === "message_reply")
+                    model.Reply(message);
+                if (message.type === "message_reaction")
+                    model.React(message, console.log(message));
+                model.db.createDataBase(message);
             }
         })
         .on("error", function (error) {
