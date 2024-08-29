@@ -57,14 +57,22 @@
             "len": "Tải Thành Công %1 Modules.",
             "reload": "Đã Cập Nhật %1."
         },
-        "model": "Kết Nối Model Control Thành Công!",
+        "model": {
+            "connect": "Kết Nối Control Thành Công!",
+            "notExist": "Lệnh \"%1\" không tồn tại phải không \"%2\"?",
+            "noPluginCalled": "Sử dụng danh sách %1help để xem danh sách các lệnh!",
+            "userBanned": "Bạn không thể sử dụng bot!\nLý do: %1\nCấm tại: %2",
+            "threadBanned": "Nhóm của bạn không thể sử dụng bot!\nLý do: %1\nCấm tại: %2",
+            "permissionDenied": "Bạn không có quyền sử dụng lệnh này!"
+        },
         "Client": {
             "connect": "Mqtt Kết Nối Thành Công!",
-            "error": "Mqtt Đã Xảy Ra Lỗi: %1"
+            "error": "Mqtt Đã Xảy Ra Lỗi: %1",
+            "reconnect": "Đang Kết Nối Lại Mqtt."
         }
     },
     "updater": {
         "newVersion": "Phiên Bản %1 Đã Chính Thức Ra Mắt, Link: https://github.com/GiaKhang1810/mira-bot-v1/blob/main/changelog.json",
         "error": "Không Thể Cập Nhật, Vui Lòng Cập Nhật Thủ Công, Lỗi: %1"
-    } 
+    }
 }
