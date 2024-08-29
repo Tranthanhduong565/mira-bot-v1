@@ -35,14 +35,39 @@
             "Add new function: Reply, React",
             "Edit function: Main, Events"
         ],
-        "source/mira.js": [
-            "Change global.modules.Reaction to global.modules.React"
-        ],
         "source/apis/lib/Client.js": [
             "Fix bug 2 send message"
         ],
         "source/control/index.js": [
             "Edit Client message"
+        ]
+    },
+    "beta-1.0.3": {
+        "source/apis/lib/Client.js": [
+            "Add new function: reconnect",
+            "Delete the function with the same name"
+        ],
+        "source/control/index.js": [
+            "Add feature: reconnect"
+        ],
+        "config": [
+            "Add new option: autoReconnectMqtt"
+        ],
+        "source/database/model/thread.mongodb.js": [
+            "Remove Object in adminIDs",
+            "Change deleteThread to deleteData"
+        ],
+        "source/database/model/thread.sqlite3.js": [
+            "Remove Object in adminIDs",
+            "Change deleteThread to deleteData"
+        ],
+        "source/control/model.js": [
+            "Add command permission limit for function Main",
+            "Change name function",
+            "Add new function: updateDataBase"
+        ],
+        "source/mira.js": [
+            "Change global.modules.Reaction to global.modules.React"
         ]
     }
 }
