@@ -1,6 +1,6 @@
 {
     "name": "mira-bot-v1",
-    "version": "beta-1.0.2",
+    "version": "beta-1.0.3",
     "description": "Simple Chatbot Messenger",
     "main": "source/mira.js",
     "scripts": {
