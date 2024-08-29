@@ -72,7 +72,7 @@ global.mira = {
 global.modules = {
     cmds: [],
     Reply: {},
-    Reaction: {},
+    React: {},
     Schedule: {}
 }
 
