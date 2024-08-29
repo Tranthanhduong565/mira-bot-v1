@@ -33,7 +33,11 @@
         "autoRefreshState": true,
         "online": true,
         "updatePresence": true,
-        "autoMarkDelivery": true
+        "autoMarkDelivery": true,
+        "autoReconnectMqtt": {
+            "enable": true,
+            "timeMS": 3600000
+        }
     },
     "systemOptions": {
         "time_zone": "Asia/Ho_Chi_Minh",
