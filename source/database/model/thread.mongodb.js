@@ -105,9 +105,10 @@ module.exports = async function ThreadDataBase(Client) {
 
     async function createData(threadID) {
         var info = await getInfo(threadID);
+        info.adminIDs = info.adminIDs.map(item => item.id);
         var infoObj = {
             threadID,
-            name: info.name,
+            name: info.name || "Unknown",
             money: 0,
             info,
             data: {},
@@ -140,7 +141,7 @@ module.exports = async function ThreadDataBase(Client) {
         return;
     }
 
-    async function deleteThread(threadID) {
+    async function deleteData(threadID) {
         if (isNaN(parseInt(threadID)))
             throw new Error("threadID must be a string number.");
         await Thread.deleteOne({ threadID });
@@ -154,6 +155,6 @@ module.exports = async function ThreadDataBase(Client) {
         findOne,
         setData,
         setDataAll,
-        deleteThread
+        deleteData
     }
 }
