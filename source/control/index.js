@@ -2,6 +2,7 @@ var utils = require("../lib/utils");
 var log = require("../lib/log");
 var fs = require("fs");
 var Child = require("child_process");
+const { set } = require("mongoose");
 
 var acceptType = [
     "message",
@@ -55,7 +56,7 @@ var requiredOptions = {
 
 module.exports = function () {
     var apis = global.mira.apis;
-    var { systemOptions } = global.mira.config;
+    var { systemOptions, facebookAPIsOptions } = global.mira.config;
 
     if (systemOptions.autoLoadPlugins.enable) {
         var path = require("path");
@@ -183,17 +184,25 @@ module.exports = function () {
     log.info("control.Client.connect");
     log.wall();
     global.mira.Client = Client;
+
+    if (facebookAPIsOptions.autoReconnectMqtt.enable) {
+        setInterval(function () {
+            log.info("control.Client.reconnect");
+            Client.reconnect();
+        }, facebookAPIsOptions.autoReconnectMqtt.timeMS);
+    }
+
     return Client
         .on("message", message => {
             if (message.type === "event") {
-
+                model.db.updateDataBase(message);
             } else if (acceptType.includes(message.type)) {
                 if (message.type === "message")
                     model.Main(message);
                 if (message.type === "message_reply")
                     model.Reply(message);
                 if (message.type === "message_reaction")
-                    model.React(message, console.log(message));
+                    model.React(message);
                 model.db.createDataBase(message);
             }
         })
