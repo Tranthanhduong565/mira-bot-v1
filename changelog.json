@@ -50,7 +50,7 @@
         "source/control/index.js": [
             "Add feature: reconnect"
         ],
-        "config": [
+        "config.json": [
             "Add new option: autoReconnectMqtt"
         ],
         "source/database/model/thread.mongodb.js": [
