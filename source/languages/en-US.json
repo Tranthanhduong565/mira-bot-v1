@@ -62,11 +62,13 @@
             "notExist": "Command \"%1\" does not exist, is it \"%2\"?",
             "noPluginCalled": "Use %1help list to see a list of commands!",
             "userBanned": "You are unable to use bot!\nReason: %1\nBan at: %2",
-            "threadBanned": "Your thread are unable to use bot!\nReason: %1\nBan at: %2"
+            "threadBanned": "Your thread are unable to use bot!\nReason: %1\nBan at: %2",
+            "permissionDenied": "You do not have permission to use this command!"
         },
         "Client": {
             "connect": "Mqtt Connection Successful!",
-            "error": "Mqtt An Error Occurred: %1"
+            "error": "Mqtt An Error Occurred: %1",
+            "reconnect": "Mqtt Reconnecting."
         }
     },
     "updater": {
