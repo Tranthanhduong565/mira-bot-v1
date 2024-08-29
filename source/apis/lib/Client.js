@@ -642,50 +642,6 @@ function parseAndReCallback(http, apis, ctx, globalCallback, deltails) {
                 return type;
         }
     }
-    function formatDeltaEvent() {
-        var logMessageType;
-        var logMessageData;
-        switch (deltails.class) {
-            case "AdminTextMessage":
-                logMessageData = deltails.untypedData;
-                logMessageType = getAdminTextMessageType(deltails.type);
-                break;
-            case "ThreadName":
-                logMessageType = "log:thread-name";
-                logMessageData = { name: deltails.name };
-                break;
-            case "ParticipantsAddedToGroupThread":
-                logMessageType = "log:subscribe";
-                logMessageData = { addedParticipants: deltails.addedParticipants };
-                break;
-            case "ParticipantLeftGroupThread":
-                logMessageType = "log:unsubscribe";
-                logMessageData = { leftParticipantFbId: deltails.leftParticipantFbId };
-                break;
-            case "ApprovalQueue":
-                logMessageType = "log:approval-queue";
-                logMessageData = {
-                    approvalQueue: {
-                        action: deltails.action,
-                        recipientFbId: deltails.recipientFbId,
-                        requestSource: deltails.requestSource,
-                        ...deltails.messageMetadata
-                    }
-                }
-        }
-
-        return {
-            type: "event",
-            threadID: utils.formatID((deltails.messageMetadata.threadKey.threadFbId || deltails.messageMetadata.threadKey.otherUserFbId).toString()),
-            messageID: deltails.messageMetadata.messageId.toString(),
-            logMessageType: logMessageType,
-            logMessageData: logMessageData,
-            logMessageBody: deltails.messageMetadata.adminText,
-            timestamp: deltails.messageMetadata.timestamp,
-            author: deltails.messageMetadata.actorFbId,
-            participantIDs: deltails.participants
-        }
-    }
 
     function getAdminTextMessageType(type) {
         switch (type) {
@@ -753,7 +709,8 @@ function parseAndReCallback(http, apis, ctx, globalCallback, deltails) {
             logMessageBody: deltails.messageMetadata.adminText,
             timestamp: deltails.messageMetadata.timestamp,
             author: deltails.messageMetadata.actorFbId,
-            participantIDs: deltails.participants
+            participantIDs: deltails.participants,
+            isGroup: !!deltails.participants
         }
     }
     switch (deltails.class) {
@@ -1071,8 +1028,6 @@ function connectClientWs(http, apis, ctx, globalCallback) {
                     timestamp: Date.now().toString()
                 }
                 globalCallback(null, notif);
-            } else {
-                console.log(topic, Message);
             }
         });
 }
@@ -1087,7 +1042,6 @@ function getSeqID(http, apis, ctx, globalCallback) {
             var reg = /<meta http-equiv="refresh" content="0;url=([^"]+)[^>]+>/;
             var redirect = reg.exec(res.body);
             if (redirect && redirect[1]) {
-                delete headers.noRef;
                 return utils
                     .get(redirect[1], ctx.jar, null, null, headers);
             }
@@ -1125,9 +1079,18 @@ module.exports = function (http, apis, ctx) {
         }
 
         disconnect() {
-            globalCallback = () => { }
+            globalCallback = () => {}
             if (ctx.Client)
                 ctx.Client.end(false, _ => ctx.Client = null);
+
+            return this;
+        }
+
+        reconnect() {
+            this.disconnect();
+            globalCallback = (error, message) => error ? this.emit("error", error) : this.emit("message", message);
+            getSeqID(http, apis, ctx, globalCallback);
+            return this;
         }
     }
 }
