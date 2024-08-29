@@ -16,6 +16,9 @@ async function createDataBase(message) {
     var { User, Thread } = model;
     var { threadID, participantIDs, isGroup } = message;
 
+    if (!global.mira.config.systemOptions.DataBase.enable) 
+        return;
+
     if (isGroup) {
         try {
             await Thread.findOne(threadID);
@@ -43,8 +46,65 @@ async function createDataBase(message) {
     }
 }
 
-async function updateDataBase(message) {
+async function updateDataBase(info) {
+    var { threadID, logMessageType, logMessageData, isGroup } = info;
 
+    if (!isGroup)
+        return;
+    var { Thread } = model;
+    var threadData = await Thread.findOne(threadID);
+
+    try {
+        if (logMessageType === "log:thread-admins") {
+            if (logMessageData.ADMIN_EVENT === "add_admin")
+                threadData.info.adminIDs.push(logMessageData.TARGET_ID);
+            else if (logMessageData.ADMIN_EVENT === "remove_admin")
+                threadData.info.adminIDs = threadData.info.adminIDs.filter(item => item !== logMessageData.TARGET_ID);
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "log:thread-name") {
+            threadData.info.threadName = logMessageData.NAME;
+            threadData.name = logMessageData.NAME;
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "log:subscribe") {
+            if (logMessageData.addedParticipants.some(item => item.userFbId === apis.getCurrentUserID()))
+                return;
+            for (var item of logMessageData.addedParticipants)
+                threadData.info.participantIDs.push(item.userFbId);
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "log:unsubscribe") {
+            if (logMessageData.leftParticipantFbId === apis.getCurrentUserID())
+                await Thread.deleteData(threadID);
+            else {
+                var index = threadData.info.participantIDs.findIndex(item => item === logMessageData.leftParticipantFbId);
+                threadData.info.participantIDs.splice(index, 1);
+                if (threadData.info.adminIDs.find(item => item === logMessageData.leftParticipantFbId))
+                    threadData.info.adminIDs = threadData.info.adminIDs.filter(item => item !== logMessageData.leftParticipantFbId);
+                await Thread.setData(threadID, threadData);
+            }
+        }
+        if (logMessageType === "log:thread-color") {
+            threadData.info.color = logMessageData.theme_color;
+            threadData.info.emoji = logMessageData.theme_emoji;
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "change_thread_quick_reaction") {
+            threadData.info.emoji = logMessageData.thread_quick_reaction_emoji;
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "joinable_group_link_mode_change") {
+            threadData.info.inviteLink.enable = !!parseInt(logMessageData.joinable_mode);
+            await Thread.setData(threadID, threadData);
+        }
+        if (logMessageType === "log:thread-approval-mode") {
+            threadData.info.approvalMode = !!parseInt(logMessageData.APPROVAL_MODE);
+            await Thread.setData(threadID, threadData);
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function levenshteinDistance(str1, str2) {
@@ -92,7 +152,7 @@ function findBestMatch(target, possibleMatches) {
     }
 }
 
-async function Main(info) {
+async function MainModel(info) {
     var allCMD = [...global.modules.cmds];
     var { prefix, adminOnly, adminIDs } = global.mira.config.botOptions;
     var { language } = require("../../config.json").systemOptions;
@@ -133,6 +193,12 @@ async function Main(info) {
     }
 
     var pl = cmd[1];
+
+    if (pl.Options.role >= 2 && !adminIDs.includes(userID))
+        return Messenger.reply(log.parseDir("control.model.permissionDenied"));
+    if (pl.Options.role >= 1 && (!adminIDs.includes(userID) || !threadData.info.adminIDs.includes(senderID)))
+        return Messenger.reply(log.parseDir("control.model.permissionDenied"));
+
     var Langs = pl.Langs[language] || pl.Langs[Object.keys(pl.Langs)[0]];
 
     function getText(dir, inputs) {
@@ -189,7 +255,7 @@ async function Main(info) {
     }
 }
 
-async function Events(info) {
+async function EventsModel(info) {
     var allCMD = [...global.modules.cmds];
     var { prefix, adminOnly, adminIDs } = global.mira.config.botOptions;
     var { language } = require("../../config.json").systemOptions;
@@ -252,13 +318,13 @@ async function Events(info) {
         function Reply(messageID) {
             return subData => global.modules.Reply[messageID] = { plugin: item[0], ...subData }
         }
-    
+
         function React(messageID) {
             return subData => global.modules.React[messageID] = { plugin: item[0], ...subData }
         }
-    
+
         delete Reply[messageID];
-    
+
         var util = {
             args,
             Messenger,
@@ -280,7 +346,7 @@ async function Events(info) {
     }
 }
 
-async function Reply(info) {
+async function ReplyModel(info) {
     var allCMD = [...global.modules.cmds];
     var { adminOnly, adminIDs } = global.mira.config.botOptions;
     var { messageID } = info.messageReply;
@@ -370,7 +436,7 @@ async function Reply(info) {
     }
 }
 
-async function React(info) {
+async function ReactModel(info) {
     var allCMD = [...global.modules.cmds];
     var { adminOnly, adminIDs } = global.mira.config.botOptions;
     var { messageID } = info;
@@ -463,8 +529,8 @@ module.exports = {
         createDataBase,
         updateDataBase
     },
-    Main,
-    Events,
-    Reply,
-    React
+    Main: MainModel,
+    Events: EventsModel,
+    Reply: ReplyModel,
+    React: ReactModel
 }
