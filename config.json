@@ -42,10 +42,6 @@
     "systemOptions": {
         "time_zone": "Asia/Ho_Chi_Minh",
         "language": "en-US",
-        "autoUpdate": {
-            "enable": true,
-            "releaseOnly": true
-        },
         "autoRestart": {
             "enable": true,
             "timeMS": 3600000
