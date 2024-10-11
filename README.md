@@ -31,7 +31,7 @@
 
 ## Sử dụng
 
-Sau khi cài đặt, bạn có thể bắt đầu sử dụng Mira Bot v1 bằng cách cấu hình các tập tin cấu hình và chạy các lệnh tương ứng.
+Sau khi cài đặt, bạn có thể bắt đầu sử dụng **Mira Bot v1** bằng cách cấu hình các tập tin cấu hình và chạy các lệnh tương ứng.
 
 ## Cấu hình
 
@@ -97,7 +97,6 @@ Bạn có thể tinh chỉnh cấu hình tại tệp [config.json](config.json).
 ## Demo
 
 Dùng tiền tố để gọi bot của bạn. Ví dụ:<br>
-
 ![demo](https://raw.githubusercontent.com/DuongJs/baitapscratchrik/refs/heads/main/462639488_1192945671797249_2821391384853884519_n.jpg)
 
 ## Đóng góp
