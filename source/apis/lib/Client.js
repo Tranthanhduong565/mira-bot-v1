@@ -559,15 +559,15 @@ function parseAndReCallback(http, apis, ctx, globalCallback, deltails) {
                                 })
                             })
                             .then(utils.parseAndCheckLogin(ctx, http))
-                            .then(resData => {
-                                if (resData[resData.length - 1].error_results > 0)
-                                    throw resData[0].o0.errors;
+                            .then(res => {
+                                if (res[res.length - 1].error_results > 0)
+                                    throw res[0].o0.errors;
 
 
-                                if (resData[resData.length - 1].successful_results === 0)
-                                    throw { error: "forcedFetch: there was no successful_results", response: resData };
+                                if (res[res.length - 1].successful_results === 0)
+                                    throw { error: "forcedFetch: there was no successful_results", response: res };
 
-                                var fetchData = resData[0].o0.data.message;
+                                var fetchData = res[0].o0.data.message;
                                 var mobj = {}
                                 for (var n in fetchData.message.ranges)
                                     mobj[fetchData.message.ranges[n].entity.id] = (fetchData.message.text || "").substr(fetchData.message.ranges[n].offset, fetchData.message.ranges[n].length);
@@ -785,13 +785,13 @@ function parseAndReCallback(http, apis, ctx, globalCallback, deltails) {
                 http
                     .post("https://www.facebook.com/api/graphqlbatch/", ctx.jar, form)
                     .then(utils.parseAndCheckLogin(ctx, http))
-                    .then(resData => {
-                        if (resData[resData.length - 1].error_results > 0)
-                            throw resData[0].o0.errors;
-                        if (resData[resData.length - 1].successful_results === 0)
-                            throw { error: "forcedFetch: there was no successful_results", response: resData }
+                    .then(res => {
+                        if (res[res.length - 1].error_results > 0)
+                            throw res[0].o0.errors;
+                        if (res[res.length - 1].successful_results === 0)
+                            throw { error: "forcedFetch: there was no successful_results", response: res }
 
-                        var fetchData = resData[0].o0.data.message;
+                        var fetchData = res[0].o0.data.message;
                         if (utils.getType(fetchData) !== "Object")
                             return;
 
@@ -1033,25 +1033,34 @@ function connectClientWs(http, apis, ctx, globalCallback) {
 }
 
 function getSeqID(http, apis, ctx, globalCallback) {
-    var headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18"
-    }
-    utils
-        .get("https://www.facebook.com/", ctx.jar, null, null, headers)
-        .then(function (res) {
-            var reg = /<meta http-equiv="refresh" content="0;url=([^"]+)[^>]+>/;
-            var redirect = reg.exec(res.body);
-            if (redirect && redirect[1]) {
-                return utils
-                    .get(redirect[1], ctx.jar, null, null, headers);
+    var form = {
+        av: void 0,
+        queries: JSON.stringify({
+            o0: {
+                doc_id: "3336396659757871",
+                query_params: {
+                    limit: 1,
+                    before: null,
+                    tags: ["INBOX"],
+                    includeDeliveryReceipts: false,
+                    includeSeqID: true
+                }
             }
-
-            return res;
         })
+    }
+
+    http
+        .post("https://www.facebook.com/api/graphqlbatch/", ctx.jar, form)
+        .then(utils.parseAndCheckLogin(ctx, http))
         .then(function (res) {
-            var seqRegex = /irisSeqID:"(\d+)"/.exec(res.body);
-            if (seqRegex && seqRegex[1]) {
-                ctx.lastSeqID = seqRegex[1];
+            if (!Array.isArray(res)) 
+                throw { error: "logout.", res }
+            if (res && res[res.length - 1].error_results > 0) 
+                throw res[0].o0.errors;
+            if (res[res.length - 1].successful_results === 0) 
+                throw { error: "getSeqId: there was no successful_results", res }
+            if (res[0].o0.data.viewer.message_threads.sync_sequence_id) {
+                ctx.lastSeqID = res[0].o0.data.viewer.message_threads.sync_sequence_id;
                 connectClientWs(http, apis, ctx, globalCallback);
             } else {
                 var error = new Error("seqID is undefined.");
@@ -1079,7 +1088,7 @@ module.exports = function (http, apis, ctx) {
         }
 
         disconnect() {
-            globalCallback = () => {}
+            globalCallback = () => { }
             if (ctx.Client)
                 ctx.Client.end(false, _ => ctx.Client = null);
 
