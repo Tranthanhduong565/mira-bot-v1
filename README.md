@@ -9,7 +9,16 @@
 - **Tự động hóa tác vụ**: Mira Bot có thể tự động hóa nhiều tác vụ lặp đi lặp lại, giúp tiết kiệm thời gian và công sức.
 - **Tích hợp dễ dàng**: Bot có thể được tổng hợp nhiều nền tảng và dịch vụ khác nhau và gửi về nền tảng facebook.
 - **Tùy chỉnh cao**: Người dùng có thể dễ dàng tùy chỉnh các chức năng của bot theo nhu cầu của mình.
+
+## Ưu điểm
+
 - **Dễ thích nghi**: Là một dự án đơn giản hóa việc dùng api của facebook, người dùng có thể dễ dàng làm quen.
+- **Tối ưu**: Dễ dàng mở rộng, chỉnh sửa, bảo trì dự án, api facebook.
+- **Tiện lợi**: Dễ dàng, thoải mái cho người mới, không yêu cầu quá nhiều kiến thức chuyên môn.
+
+## Nhược điểm
+
+- **Rủi ro**: Có thể bị khoá tài khoản tạm thời hoặc vĩnh viễn từ facebook, do bị nghi ngờ truy cập trái phép.
 
 ## Cài đặt
 
