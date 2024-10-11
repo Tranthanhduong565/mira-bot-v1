@@ -2,12 +2,12 @@
 
 ## Giới thiệu
 
-**Mira Bot v1** là một dự án bot tự động hóa được thiết kế để hỗ trợ người dùng trong nhiều tác vụ khác nhau. Dự án này nhằm mục đích cung cấp một công cụ mạnh mẽ và dễ sử dụng cho các nhà phát triển và người dùng cuối.
+**Mira Bot v1** là một dự án bot facebook tự động hóa được thiết kế để hỗ trợ người dùng trong nhiều tác vụ khác nhau. Dự án này nhằm mục đích cung cấp một công cụ mạnh mẽ và dễ sử dụng cho các nhà phát triển và người dùng cuối.
 
 ## Tính năng
 
 - **Tự động hóa tác vụ**: Mira Bot có thể tự động hóa nhiều tác vụ lặp đi lặp lại, giúp tiết kiệm thời gian và công sức.
-- **Tích hợp dễ dàng**: Bot có thể được tích hợp với nhiều nền tảng và dịch vụ khác nhau.
+- **Tích hợp dễ dàng**: Bot có thể được tổng hợp nhiều nền tảng và dịch vụ khác nhau và gửi về nền tảng facebook.
 - **Tùy chỉnh cao**: Người dùng có thể dễ dàng tùy chỉnh các chức năng của bot theo nhu cầu của mình.
 - **Dễ thích nghi**: Là một dự án đơn giản hóa việc dùng api của facebook, người dùng có thể dễ dàng làm quen.
 
